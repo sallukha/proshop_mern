@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {  toast } from 'react-toastify';
 
 type FormData = {
   email: string;
@@ -30,7 +31,7 @@ const LoginForm = () => {
       setFormData(data);
 
 
-      alert("Welcome, Sallu Khan!");
+      toast.success("Welcome, Sallu Khan!");
       navigate("/")
       reset();
     } else {
