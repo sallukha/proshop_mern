@@ -1,127 +1,68 @@
+
 import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import {  toast } from 'react-toastify';
 
-type FormData = {
-  email: string;
-  password: string; 
-  // sallu khan
-};
 
-const LoginForm = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
-  const [formData, setFormData] = useState<FormData | null>(null);
-  const [loginError, setLoginError] = useState<string | null>(null);
+const SignUpForm = () => {
+  const { register, handleSubmit,  formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const onSubmit = async (data: any) => {
+    try {
+     const response =  await axios.post('http://localhost:3000/log_in', data);
+      // console.log('User Login:', response.data);
 
-  const onSubmit = (data: FormData) => {
-    setLoginError(null);
+      toast.success('Login successful');
+      navigate('/');
 
+    } catch (error) {
+      console.error('There was an error registering the user!', error);
 
-    const validEmail = "sallukhan54159@gmail.com";
-    const validPassword = "sallu0786";
-
-    if (data.email === validEmail && data.password === validPassword) {
-
-      localStorage.setItem('email', data.email);
-      localStorage.setItem('password', data.password);
-
-
-      setFormData(data);
-
-
-      toast.success("Welcome, Sallu Khan!");
-      navigate("/")
-      reset();
-    } else {
-
-      setLoginError("Invalid email or password");
+      toast.error('Login failed! Please try again.');
     }
   };
 
-  useEffect(() => {
-
-    const savedEmail = localStorage.getItem('email');
-    const savedPassword = localStorage.getItem('password');
-
-    if (savedEmail && savedPassword) {
-      setFormData({ email: savedEmail, password: savedPassword });
-    }
-  }, []);
-
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-10">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Email
-          </label>
-          <input
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: "Invalid email format"
-              }
-            })}
-            type="email"
-            id="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-          {errors.email && (
-            <p className="text-red-500">{errors.email.message}</p>
-          )}
-        </div>
+    <>
 
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Password
-          </label>
-          <input
-            {...register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters long"
-              }
-            })}
-            type="password"
-            id="password"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-          {errors.password && (
-            <p className="text-red-500">{errors.password.message}</p>
-          )}
-        </div>
+      <div className='mt-10'>
 
-        {loginError && (
-          <p className="text-red-500 mb-4">{loginError}</p>
-        )}
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Log in</h2>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Login
+
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Email</label>
+            <input
+              {...register('email', { required: true })}
+              className={`mt-1 block w-full p-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.email && <span className="text-red-500 text-sm">This field is required</span>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">Password</label>
+            <input
+              type="password"
+              {...register('password', { required: true })}
+              className={`mt-1 block w-full p-2 border rounded-md ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+            />
+            {errors.password && <span className="text-red-500 text-sm">This field is required</span>}
+          </div>
+
+
+
+          <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-200">
+            Log in
           </button>
-         </form>
+        </form>
 
-          {formData && (
-        <div className="mt-4 p-4 bg-white rounded-md shadow-md">
-          <h2 className="text-xl font-bold">Form Data</h2>
-          <p><strong>Email:</strong> {formData.email}</p>
-          <p><strong>Password:</strong> {formData.password}</p>
-        </div>
-      )}
-    </div>
+      </div>
+
+    </>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;
