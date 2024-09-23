@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 type FormData = {
   email: string;
-  password: string;
+  password: string; 
+  // sallu khan
 };
 
 const LoginForm = () => {
